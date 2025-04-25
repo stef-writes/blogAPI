@@ -1,14 +1,11 @@
 // Routes for handling blog post operations (CRUD)
 const express = require('express');
 const router = express.Router();
-const { v4: uuidv4 } = require('uuid'); // Still need UUID for creating posts
+const { v4: uuidv4 } = require('uuid'); 
 
-// We need access to the posts array from app.js
-// This is a simplified approach for in-memory data.
-// In a real app, you might use a database or a dedicated data service.
-let posts; // Will be set by app.js
 
-// Function to inject the posts array (dependency injection)
+let posts; 
+
 const setPosts = (postsArray) => {
   posts = postsArray;
 };
@@ -18,7 +15,7 @@ const setPosts = (postsArray) => {
 // GET / - Retrieve all blog posts
 router.get('/', (req, res) => {
   if (!posts) return res.status(500).json({ error: 'Posts data not initialized' });
-  res.json(posts); // Return the full array of posts
+  res.json(posts); 
 });
 
 // GET /:id - Retrieve a specific blog post by ID
@@ -51,12 +48,12 @@ router.post('/', (req, res) => {
     publicationDate: new Date(), // Use current date
     readTime: Math.ceil(content.length / 200), // Calculate read time
     content,
-    likes: 0, // Initialize likes
-    comments: [] // Initialize comments
+    likes: 0, 
+    comments: []
   };
 
-  posts.push(newPost); // Add to in-memory array
-  res.status(201).json(newPost); // Respond with created post and 201 status
+  posts.push(newPost);
+  res.status(201).json(newPost); 
 });
 
 // PUT /:id - Update an existing blog post by ID
@@ -74,7 +71,6 @@ router.put('/:id', (req, res) => {
   // Get the existing post
   const post = posts[postIndex];
 
-  // Update fields if they are provided in the request body
   const updatedPost = {
     ...post,
     title: title !== undefined ? title : post.title,
@@ -87,7 +83,7 @@ router.put('/:id', (req, res) => {
   res.json(updatedPost);
 });
 
-// DELETE /:id - Delete a specific blog post by ID
+// DELETE /:id
 router.delete('/:id', (req, res) => {
   if (!posts) return res.status(500).json({ error: 'Posts data not initialized' });
   const { id } = req.params;
@@ -101,7 +97,7 @@ router.delete('/:id', (req, res) => {
   res.json({ message: "Post deleted successfully" });
 });
 
-// POST /:id/comment - Add a comment to a specific blog post
+// POST /:id/comment
 router.post('/:id/comment', (req, res) => {
   if (!posts) return res.status(500).json({ error: 'Posts data not initialized' });
   const { id } = req.params; // Post ID
@@ -120,7 +116,7 @@ router.post('/:id/comment', (req, res) => {
 
   // Create the new comment
   const newComment = {
-    id: uuidv4(), // Generate unique ID for the comment
+    id: uuidv4(), 
     author,
     content
   };
@@ -128,12 +124,11 @@ router.post('/:id/comment', (req, res) => {
   // Add the comment to the post's comments array
   post.comments.push(newComment);
 
-  // Respond with the updated post (or just the comment)
-  // Returning the updated post is often useful for the client
+
   res.status(201).json(post); 
 });
 
-// GET /:id/comments - Retrieve all comments for a specific blog post
+// GET /:id/comments
 router.get('/:id/comments', (req, res) => {
   if (!posts) return res.status(500).json({ error: 'Posts data not initialized' });
   const { id } = req.params; // Post ID
@@ -148,7 +143,7 @@ router.get('/:id/comments', (req, res) => {
   res.json(post.comments);
 });
 
-// POST /:id/like - Increment the like count for a specific blog post
+// POST /:id/like
 router.post('/:id/like', (req, res) => {
   if (!posts) return res.status(500).json({ error: 'Posts data not initialized' });
   const { id } = req.params; // Post ID
@@ -160,10 +155,10 @@ router.post('/:id/like', (req, res) => {
   }
 
   // Increment the likes count
-  post.likes++; // Simple increment
+  post.likes++; 
 
-  // Respond with the updated like count
+  
   res.json({ likes: post.likes });
 });
 
-module.exports = { router, setPosts }; // Export the router and the setter function
+module.exports = { router, setPosts }; 

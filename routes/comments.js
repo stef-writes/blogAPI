@@ -1,14 +1,13 @@
-// // Routes for handling specific comment operations (update, delete)
+// // Routes for handling specific comment operations
 const express = require('express');
 const router = express.Router();
 
-// Dependency injection for posts array
 let posts;
 const setPosts = (postsArray) => {
   posts = postsArray;
 };
 
-// PUT /:commentId - Update a specific comment by its ID
+// PUT /:commentId
 router.put('/:commentId', (req, res) => {
   if (!posts) return res.status(500).json({ error: 'Posts data not initialized' });
   const { commentId } = req.params;
@@ -25,9 +24,9 @@ router.put('/:commentId', (req, res) => {
   for (const post of posts) {
     const comment = post.comments.find(c => c.id === commentId);
     if (comment) {
-      comment.content = content; // Update the content
+      comment.content = content; 
       updatedComment = comment;
-      break; // Found the comment, no need to check other posts
+      break; 
     }
   }
 
@@ -38,7 +37,7 @@ router.put('/:commentId', (req, res) => {
   }
 });
 
-// DELETE /:commentId - Delete a specific comment by its ID
+// DELETE /:commentId
 router.delete('/:commentId', (req, res) => {
   if (!posts) return res.status(500).json({ error: 'Posts data not initialized' });
   const { commentId } = req.params;
@@ -48,9 +47,9 @@ router.delete('/:commentId', (req, res) => {
   for (const post of posts) {
     const commentIndex = post.comments.findIndex(c => c.id === commentId);
     if (commentIndex !== -1) {
-      post.comments.splice(commentIndex, 1); // Remove the comment
+      post.comments.splice(commentIndex, 1);
       commentFound = true;
-      break; // Found and removed, no need to check other posts
+      break;
     }
   }
 
