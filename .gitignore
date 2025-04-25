@@ -1,0 +1,7 @@
+# // Standard Node.js gitignore: specify files/directories to ignore (e.g., node_modules, .env, logs)
+node_modules/
+.env
+logs/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log* 
