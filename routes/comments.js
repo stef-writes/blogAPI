@@ -1,6 +1,7 @@
 // // Routes for handling specific comment operations
 const express = require('express');
 const router = express.Router();
+const { validateComment } = require('../middleware/validation');
 
 let posts;
 const setPosts = (postsArray) => {
@@ -8,7 +9,7 @@ const setPosts = (postsArray) => {
 };
 
 // PUT /:commentId
-router.put('/:commentId', (req, res) => {
+router.put('/:commentId', validateComment, (req, res) => {
   if (!posts) return res.status(500).json({ error: 'Posts data not initialized' });
   const { commentId } = req.params;
   const { content } = req.body;

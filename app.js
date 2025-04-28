@@ -1,5 +1,8 @@
-// // Main application file
+// // Main application file: Express setup, middleware, routes, and data storage.
 const express = require('express');
+// Import validation middleware
+const { validatePost, validateComment } = require('./middleware/validation');
+
 const app = express();
 
 // Import routers and setters
@@ -9,15 +12,19 @@ const { router: commentsRouter, setPosts: setPostsForComments } = require('./rou
 // In-memory data store
 let posts = [];
 
+// Inject the posts array into the router modules
 setPostsForPosts(posts);
-setPostsForComments(posts); 
+setPostsForComments(posts); // Give comments router access too
+
+// Expose validation middleware to routes
+module.exports = { validatePost, validateComment };
 
 // --- Middleware ---
 
 // Request Logger
 app.use((req, res, next) => {
   console.log(`${req.method} ${req.url}`);
-  next();
+  next(); // Pass control to the next middleware function
 });
 
 // JSON Body Parser (already added)
@@ -50,19 +57,30 @@ app.get('/search', (req, res) => {
   res.json(matchingPosts);
 });
 
-// GET /filter
+// GET /filter - Filter posts by author and/or tag
 app.get('/filter', (req, res) => {
-  const author = req.query.author;
+  const { author, tag } = req.query;
 
-  
-  if (!author) {
+  // If no filter parameters are provided, return empty array
+  if (!author && !tag) {
     return res.json([]);
   }
 
-  // Filter posts where the author matches
-  const matchingPosts = posts.filter(post => post.author === author);
+  let filteredPosts = [...posts]; // Start with all posts
 
-  res.json(matchingPosts);
+  // Apply author filter if provided (exact match, case-sensitive)
+  if (author) {
+    filteredPosts = filteredPosts.filter(post => post.author === author);
+  }
+
+  // Apply tag filter if provided
+  if (tag) {
+    filteredPosts = filteredPosts.filter(post => 
+      Array.isArray(post.tags) && post.tags.includes(tag)
+    );
+  }
+
+  res.json(filteredPosts);
 });
 
 // Mount routers
